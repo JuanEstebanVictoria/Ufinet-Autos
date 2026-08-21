@@ -1,0 +1,35 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>My Autos</h2>
+    <button class="btn btn-primary" routerLink="/add">Add New Auto</button>
+  </div>
+  
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Year</th>
+        <th>License Plate</th>
+        <th>Color</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let auto of autos">
+        <td>{{ auto.brand }}</td>
+        <td>{{ auto.model }}</td>
+        <td>{{ auto.year }}</td>
+        <td><span class="badge bg-secondary">{{ auto.licensePlate }}</span></td>
+        <td>{{ auto.color }}</td>
+        <td>
+          <button class="btn btn-sm btn-info me-2" [routerLink]="['/edit', auto.id]">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteAuto(auto.id!)">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="autos.length === 0">
+        <td colspan="6" class="text-center py-4">You haven't registered any autos yet.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
