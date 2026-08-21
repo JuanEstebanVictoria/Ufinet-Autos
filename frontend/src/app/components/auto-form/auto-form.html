@@ -61,7 +61,43 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-success" [disabled]="autoForm.invalid">Save</button>
+        <!-- Simulated Photo Upload -->
+        <div class="mb-4">
+          <label class="form-label">Car Photo (Optional)</label>
+          <div class="card p-3 text-center" style="border: 2px dashed #ccc; background: #f8f9fa;">
+            
+            <!-- Hidden file input -->
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="d-none" #fileInput>
+            
+            <!-- Empty State (No upload yet) -->
+            <div *ngIf="!photoPreview && !isUploading">
+              <div class="mb-2 fs-1 text-secondary">📷</div>
+              <p class="mb-2">Upload a photo of your car</p>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="fileInput.click()">Select Image</button>
+            </div>
+
+            <!-- Uploading State (Progress Bar) -->
+            <div *ngIf="isUploading" class="py-3">
+              <p class="mb-2 text-primary fw-bold">Uploading... {{ uploadProgress }}%</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                     [style.width.%]="uploadProgress" 
+                     [attr.aria-valuenow]="uploadProgress" 
+                     aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <!-- Preview State -->
+            <div *ngIf="photoPreview && !isUploading" class="position-relative d-inline-block mt-2">
+              <img [src]="photoPreview" alt="Car preview" class="img-thumbnail" style="max-height: 200px;">
+              <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" 
+                      (click)="removePhoto()" style="border-radius: 50%; padding: 0.1rem 0.4rem;">X</button>
+            </div>
+
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-success" [disabled]="autoForm.invalid || isUploading">Save</button>
         <button type="button" class="btn btn-secondary ms-2" routerLink="/">Cancel</button>
       </form>
     </div>

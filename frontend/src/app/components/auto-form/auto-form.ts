@@ -24,6 +24,11 @@ export class AutoFormComponent implements OnInit {
   /** Error message to display if the server request fails. */
   errorMessage: string | null = null;
 
+  // Photo upload simulation state
+  isUploading = false;
+  uploadProgress = 0;
+  photoPreview: string | ArrayBuffer | null = null;
+
   constructor(
     private fb: FormBuilder,
     private autoService: AutoService,
@@ -80,5 +85,41 @@ export class AutoFormComponent implements OnInit {
         this.autoService.createAuto(autoData).subscribe(handleResponse);
       }
     }
+  }
+
+  /**
+   * Simulates a photo upload process.
+   * Progresses from 0 to 100% over 2 seconds, then generates a local preview URL.
+   */
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
+      this.isUploading = true;
+      this.uploadProgress = 0;
+      
+      // Simulate a network upload with a progress bar
+      const interval = setInterval(() => {
+        this.uploadProgress += 10;
+        if (this.uploadProgress >= 100) {
+          clearInterval(interval);
+          this.isUploading = false;
+          
+          // Read the image file locally to display a preview
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.photoPreview = e.target?.result || null;
+          };
+          reader.readAsDataURL(file);
+        }
+      }, 200); // 10 steps of 200ms = 2 seconds total
+    }
+  }
+
+  /** Removes the selected photo preview. */
+  removePhoto(): void {
+    this.photoPreview = null;
+    this.uploadProgress = 0;
   }
 }
