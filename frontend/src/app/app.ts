@@ -13,10 +13,9 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.html'
 })
 export class AppComponent {
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(public authService: AuthService, private router: Router) { }
 
-  /**
-   * Logs out the current user and redirects to the login page.
+  /** Logs out the current user and redirects to the login page.
    */
   logout(): void {
     this.authService.logout();

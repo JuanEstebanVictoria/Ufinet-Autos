@@ -25,7 +25,8 @@ public class AutoController {
     private final AutoService autoService;
 
     /**
-     * Returns the authenticated user's database ID from the active security context.
+     * Returns the authenticated user's database ID from the active security
+     * context.
      *
      * @param auth the current authentication token
      * @return the user's primary key
@@ -34,20 +35,8 @@ public class AutoController {
         return ((CustomUserDetails) auth.getPrincipal()).getId();
     }
 
-    /** Returns all cars for the authenticated user, with optional search filters.
-     *
-     * <p>All parameters are optional. Examples:
-     * <ul>
-     *   <li>{@code GET /api/autos} — returns all cars</li>
-     *   <li>{@code GET /api/autos?plate=ABC} — returns cars whose plate contains "ABC" (case-insensitive)</li>
-     *   <li>{@code GET /api/autos?brand=toyota} — returns cars whose brand contains "toyota"</li>
-     *   <li>{@code GET /api/autos?year=2022} — returns cars from the year 2022</li>
-     *   <li>{@code GET /api/autos?brand=ford&year=2020} — combinations work too</li>
-     * </ul>
-     *
-     * @param plate partial license plate filter (case-insensitive), optional
-     * @param brand partial brand filter (case-insensitive), optional
-     * @param year  exact year filter, optional
+    /**
+     * Returns all cars for the authenticated user, with optional search filters.
      */
     @GetMapping
     public ResponseEntity<List<AutoResponseDTO>> getAllAutos(
@@ -59,7 +48,8 @@ public class AutoController {
     }
 
     /**
-     * Returns a single car by ID. Returns 404 if it does not exist or belongs to another user.
+     * Returns a single car by ID. Returns 404 if it does not exist or belongs to
+     * another user.
      */
     @GetMapping("/{id}")
     public ResponseEntity<AutoResponseDTO> getAutoById(@PathVariable Long id, Authentication auth) {
@@ -82,7 +72,8 @@ public class AutoController {
     }
 
     /**
-     * Updates an existing car. Returns 404 if it does not exist or belongs to another user.
+     * Updates an existing car. Returns 404 if it does not exist or belongs to
+     * another user.
      *
      * @param id  the car ID to update
      * @param dto the new car data
@@ -99,7 +90,8 @@ public class AutoController {
     }
 
     /**
-     * Deletes a car by ID. Returns 404 if it does not exist or belongs to another user.
+     * Deletes a car by ID. Returns 404 if it does not exist or belongs to another
+     * user.
      *
      * @param id the car ID to delete
      */
@@ -108,10 +100,10 @@ public class AutoController {
         autoService.getEntityByIdAndUserId(id, getCurrentUserId(auth))
                 .ifPresentOrElse(
                         auto -> autoService.deleteAuto(id),
-                        () -> { throw new ResourceNotFoundException(
-                                "Auto with id " + id + " not found or does not belong to the current user"); }
-                );
+                        () -> {
+                            throw new ResourceNotFoundException(
+                                    "Auto with id " + id + " not found or does not belong to the current user");
+                        });
         return ResponseEntity.noContent().build();
     }
 }
-
