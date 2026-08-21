@@ -16,13 +16,25 @@ import java.util.Optional;
 public interface AutoRepository extends JpaRepository<Auto, Long> {
 
     /**
-     * Returns all cars belonging to the given user.
+     * Returns all cars belonging to the given user, with optional filters.
+     * Each filter parameter is optional — passing {@code null} skips that condition.
+     * Plate and brand matching is case-insensitive and partial (contains).
      *
      * @param userId the owner's primary key
-     * @return list of cars owned by that user
+     * @param plate  partial license plate to match, or {@code null} to skip
+     * @param brand  partial brand name to match, or {@code null} to skip
+     * @param year   exact year to match, or {@code null} to skip
+     * @return filtered list of cars owned by that user
      */
-    @Query("SELECT a FROM Auto a WHERE a.user.id = :userId")
-    List<Auto> findByUserId(@Param("userId") Long userId);
+    @Query("SELECT a FROM Auto a WHERE a.user.id = :userId " +
+           "AND (:plate IS NULL OR LOWER(a.licensePlate) LIKE LOWER(CONCAT('%', :plate, '%'))) " +
+           "AND (:brand IS NULL OR LOWER(a.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) " +
+           "AND (:year IS NULL OR a.year = :year)")
+    List<Auto> searchByUserId(
+            @Param("userId") Long userId,
+            @Param("plate") String plate,
+            @Param("brand") String brand,
+            @Param("year") Integer year);
 
     /**
      * Returns a single car by ID, only if it belongs to the given user.

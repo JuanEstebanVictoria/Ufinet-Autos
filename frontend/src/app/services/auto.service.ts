@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Auto } from '../models/auto.model';
 
+/** Filters accepted by the GET /api/autos endpoint. All fields are optional. */
+export interface AutoFilters {
+  plate?: string;
+  brand?: string;
+  year?: number | null;
+}
+
 /**
  * Service to manage automobile-related operations.
- * SUGGESTION: Centralize the base API URL in an environment file for consistency and configurability.
  */
 @Injectable({
   providedIn: 'root'
@@ -16,11 +22,18 @@ export class AutoService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Fetches the list of all automobiles.
-   * @returns An observable of an array of Auto objects.
+   * Fetches the list of automobiles, optionally filtered by plate, brand, or year.
+   * Any filter that is undefined, null, or an empty string is omitted from the request.
+   *
+   * @param filters optional search criteria
+   * @returns an observable of the matching Auto objects
    */
-  getAutos(): Observable<Auto[]> {
-    return this.http.get<Auto[]>(this.apiUrl);
+  getAutos(filters: AutoFilters = {}): Observable<Auto[]> {
+    let params = new HttpParams();
+    if (filters.plate?.trim())        params = params.set('plate', filters.plate.trim());
+    if (filters.brand?.trim())        params = params.set('brand', filters.brand.trim());
+    if (filters.year != null)         params = params.set('year',  filters.year.toString());
+    return this.http.get<Auto[]>(this.apiUrl, { params });
   }
 
   /**

@@ -34,10 +34,28 @@ public class AutoController {
         return ((CustomUserDetails) auth.getPrincipal()).getId();
     }
 
-    /** Returns all cars belonging to the authenticated user. */
+    /** Returns all cars for the authenticated user, with optional search filters.
+     *
+     * <p>All parameters are optional. Examples:
+     * <ul>
+     *   <li>{@code GET /api/autos} — returns all cars</li>
+     *   <li>{@code GET /api/autos?plate=ABC} — returns cars whose plate contains "ABC" (case-insensitive)</li>
+     *   <li>{@code GET /api/autos?brand=toyota} — returns cars whose brand contains "toyota"</li>
+     *   <li>{@code GET /api/autos?year=2022} — returns cars from the year 2022</li>
+     *   <li>{@code GET /api/autos?brand=ford&year=2020} — combinations work too</li>
+     * </ul>
+     *
+     * @param plate partial license plate filter (case-insensitive), optional
+     * @param brand partial brand filter (case-insensitive), optional
+     * @param year  exact year filter, optional
+     */
     @GetMapping
-    public ResponseEntity<List<AutoResponseDTO>> getAllAutos(Authentication auth) {
-        return ResponseEntity.ok(autoService.getAutosByUserId(getCurrentUserId(auth)));
+    public ResponseEntity<List<AutoResponseDTO>> getAllAutos(
+            @RequestParam(required = false) String plate,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) Integer year,
+            Authentication auth) {
+        return ResponseEntity.ok(autoService.searchAutos(getCurrentUserId(auth), plate, brand, year));
     }
 
     /**

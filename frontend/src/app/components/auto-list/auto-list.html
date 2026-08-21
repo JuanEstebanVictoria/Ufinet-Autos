@@ -3,7 +3,9 @@
     <h2>My Autos</h2>
     <button class="btn btn-primary" routerLink="/add">Add New Auto</button>
   </div>
-  
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
   <table class="table table-striped table-hover">
     <thead class="table-dark">
       <tr>
@@ -28,8 +30,50 @@
         </td>
       </tr>
       <tr *ngIf="autos.length === 0">
-        <td colspan="6" class="text-center py-4">You haven't registered any autos yet.</td>
+        <td colspan="6" class="text-center py-4 text-muted">
+          {{ selectedFilter !== 'none' && filterValue ? 'No cars found matching your filter.' : 'No cars registered yet.
+          Add your first one!' }}
+        </td>
       </tr>
     </tbody>
   </table>
+  <!-- Filter: dropdown + input -->
+  <div class="card mb-3 shadow-sm">
+    <div class="card-body py-3">
+      <div class="row g-2 align-items-end">
+
+        <!-- Step 1: Pick a filter type -->
+        <div class="col-12 col-md-3">
+          <label for="filterType" class="form-label fw-semibold mb-1">Filter by</label>
+          <select id="filterType" class="form-select" [(ngModel)]="selectedFilter" (change)="onFilterTypeChange()">
+            <option value="none">— No filter —</option>
+            <option value="plate">License Plate</option>
+            <option value="brand">Brand</option>
+            <option value="year">Year</option>
+          </select>
+        </div>
+
+        <!-- Step 2: Type a value (only visible when a filter is selected) -->
+        <div class="col-12 col-md-7" *ngIf="selectedFilter !== 'none'">
+          <label for="filterValue" class="form-label fw-semibold mb-1">
+            {{ selectedFilter === 'plate' ? 'Search plate…' :
+            selectedFilter === 'brand' ? 'Search brand…' :
+            'Enter year…' }}
+          </label>
+          <input id="filterValue" [type]="selectedFilter === 'year' ? 'number' : 'text'" class="form-control"
+            [placeholder]="selectedFilter === 'plate' ? 'e.g. ABC-123' :
+                           selectedFilter === 'brand' ? 'e.g. Toyota' :
+                           'e.g. 2022'" [(ngModel)]="filterValue" (input)="onFilterValueChange()" />
+        </div>
+
+        <!-- Clear button -->
+        <div class="col-12 col-md-2" *ngIf="selectedFilter !== 'none'">
+          <button class="btn btn-outline-secondary w-100" (click)="clearFilter()">
+            Clear
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>

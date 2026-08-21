@@ -33,14 +33,18 @@ public class AutoService {
     private EntityManager entityManager;
 
     /**
-     * Returns all cars belonging to the given user.
+     * Returns cars belonging to the given user, filtered by any combination of plate, brand, and year.
+     * Pass {@code null} for any filter to ignore it — passing all nulls returns every car for the user.
      *
      * @param userId the owner's primary key
-     * @return list of car response DTOs
+     * @param plate  partial license plate (case-insensitive), or {@code null}
+     * @param brand  partial brand name (case-insensitive), or {@code null}
+     * @param year   exact year to match, or {@code null}
+     * @return filtered list of car response DTOs
      */
     @Transactional(readOnly = true)
-    public List<AutoResponseDTO> getAutosByUserId(Long userId) {
-        return autoRepository.findByUserId(userId)
+    public List<AutoResponseDTO> searchAutos(Long userId, String plate, String brand, Integer year) {
+        return autoRepository.searchByUserId(userId, plate, brand, year)
                 .stream()
                 .map(AutoResponseDTO::fromEntity)
                 .collect(Collectors.toList());
