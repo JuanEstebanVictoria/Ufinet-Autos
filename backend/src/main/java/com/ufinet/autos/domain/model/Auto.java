@@ -1,44 +1,28 @@
 package com.ufinet.autos.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
 /**
- * Entity representing an automobile in the system.
+ * Pure domain object representing an automobile.
+ * Contains no framework-specific annotations — no JPA, no Jackson.
  */
-@Entity
-@Table(name = "CARS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Auto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
     private String brand;
-
-    @Column(nullable = false)
     private String model;
-
-    @Column(name = "[year]", nullable = false)
     private Integer year;
-
-    @Column(name = "license_plate", nullable = false, unique = true)
     private String licensePlate;
-
     private String color;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
-    private User user;
+    /**
+     * The owner's primary key — stored as a plain Long (not a JPA relation).
+     * The persistence adapter is responsible for resolving this to a FK reference.
+     */
+    private Long userId;
 }

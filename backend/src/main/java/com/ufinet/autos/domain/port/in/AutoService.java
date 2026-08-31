@@ -1,26 +1,38 @@
 package com.ufinet.autos.domain.port.in;
 
-import com.ufinet.autos.infrastructure.web.dto.AutoRequestDTO;
-import com.ufinet.autos.infrastructure.web.dto.AutoResponseDTO;
 import com.ufinet.autos.domain.model.Auto;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Service that handles business logic for car operations.
+ * Input port (primary port) for car-related use cases.
+ * All methods work exclusively with domain objects — no DTOs, no JPA types.
  */
 public interface AutoService {
 
-    List<AutoResponseDTO> searchAutos(Long userId, String plate, String brand, Integer year);
+    /**
+     * Returns cars belonging to the given user, filtered by any combination of plate, brand, and year.
+     */
+    List<Auto> searchAutos(Long userId, String plate, String brand, Integer year);
 
-    Optional<AutoResponseDTO> getAutoByIdAndUserId(Long id, Long userId);
+    /**
+     * Returns a single car by ID if it belongs to the given user.
+     */
+    Optional<Auto> getAutoByIdAndUserId(Long id, Long userId);
 
-    AutoResponseDTO createAuto(AutoRequestDTO dto, Long userId);
+    /**
+     * Persists a new car. The domain {@link Auto} must have a non-null {@code userId}.
+     */
+    Auto createAuto(Auto auto);
 
-    AutoResponseDTO updateAuto(Auto auto, AutoRequestDTO dto);
+    /**
+     * Persists an updated car.
+     */
+    Auto updateAuto(Auto auto);
 
+    /**
+     * Deletes a car by its primary key.
+     */
     void deleteAuto(Long id);
-
-    Optional<Auto> getEntityByIdAndUserId(Long id, Long userId);
 }

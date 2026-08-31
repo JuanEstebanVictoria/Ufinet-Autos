@@ -1,36 +1,25 @@
 package com.ufinet.autos.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.List;
-
 /**
- * Entity representing a user of the application.
+ * Pure domain object representing a user of the application.
+ * Contains no framework-specific annotations — no JPA, no Jackson.
  */
-@Entity
-@Table(name = "USERS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true, nullable = false)
     private String username;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(nullable = false)
+    /**
+     * BCrypt-encoded password.
+     * Kept here so the domain can pass it to the security layer without
+     * requiring a separate infrastructure call.
+     */
     private String password;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Auto> cars;
 }

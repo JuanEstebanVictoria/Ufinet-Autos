@@ -9,7 +9,8 @@ import java.util.Optional;
 
 /**
  * Infrastructure adapter that fulfills the {@link UserPort} output port
- * using Spring Data JPA. The domain never imports this class directly.
+ * using Spring Data JPA. This is the only class that knows about
+ * {@link UserEntity} and {@link UserRepository} — the domain never imports them.
  */
 @Component
 @RequiredArgsConstructor
@@ -19,7 +20,8 @@ public class UserRepositoryAdapter implements UserPort {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username)
+                .map(UserEntity::toDomain);
     }
 
     @Override
@@ -29,6 +31,7 @@ public class UserRepositoryAdapter implements UserPort {
 
     @Override
     public User save(User user) {
-        return userRepository.save(user);
+        UserEntity entity = UserEntity.fromDomain(user);
+        return userRepository.save(entity).toDomain();
     }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * DTO for outgoing auto responses.
- * Only exposes safe, client-relevant fields — never the User relationship.
+ * Only exposes safe, client-relevant fields — never the user relationship or internal IDs.
  */
 @Data
 @NoArgsConstructor
@@ -22,12 +22,12 @@ public class AutoResponseDTO {
     private String color;
 
     /**
-     * Maps an Auto entity to its response DTO.
+     * Maps a domain {@link Auto} to its response DTO.
      *
-     * @param auto the entity to map
+     * @param auto the domain object to map
      * @return the populated DTO
      */
-    public static AutoResponseDTO fromEntity(Auto auto) {
+    public static AutoResponseDTO fromDomain(Auto auto) {
         return new AutoResponseDTO(
                 auto.getId(),
                 auto.getBrand(),
